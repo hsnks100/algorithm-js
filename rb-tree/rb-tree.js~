@@ -1,0 +1,7 @@
+
+function RBTree() {
+}
+
+
+// RBTree.prototype.x = function() { ... }; 
+// RBTree.prototype.y = function() { ... };

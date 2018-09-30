@@ -5,29 +5,32 @@ function Node(v) {
     this.parent = null;
     this.color = "red";
     this.value = v;
-};
+}
 
 function RBTree() {
     this.root = null; 
 } 
-RBTree.prototype.insert = function(v) {
+
+RBTree.protoype.insert = function(v) {
     var node = new Node(v);
-    if(this.root == null) {
+    if(this.root === null) {
         this.root = node;
     }
     else {
         var inserter = function myself(node, newNode) {
             if(node.value >= newNode.value) {
-                if(node.left == null) {
+                if(node.left === null) {
                     node.left = newNode;
+                    newNode.parent = node;
                 }
                 else {
                     myself(node.left, newNode);
                 }
             }
             else {
-                if(node.right == null) {
+                if(node.right === null) {
                     node.right = newNode;
+                    newNode.parent = node;
                 }
                 else {
                     myself(node.right, newNode);
@@ -36,12 +39,64 @@ RBTree.prototype.insert = function(v) {
 
         };
         inserter(this.root, node);
+        this.fix(node); 
+    } 
+};
+
+
+RBTree.protoype.rotateLeft = function(pivotNode) {
+
+};
+
+RBTree.protoype.rotateRight = function(pivotNode) {
+};
+
+RBTree.protoype.fix = function(node) {
+    if(node === this.root) {
+        node.color = "black";
+    }
+    else {
+
+    }
+
+
+};
+RBTree.prototype.insertBinary = function(v) {
+    var node = new Node(v);
+    if(this.root === null) {
+        this.root = node;
+    }
+    else {
+        var inserter = function myself(node, newNode) {
+            if(node.value >= newNode.value) {
+                if(node.left === null) {
+                    node.left = newNode;
+                    newNode.parent = node;
+                }
+                else {
+                    myself(node.left, newNode);
+                }
+            }
+            else {
+                if(node.right === null) {
+                    node.right = newNode;
+                    newNode.parent = node;
+                }
+                else {
+                    myself(node.right, newNode);
+                }
+            }
+
+        };
+        inserter(this.root, node);
+
     }
 }; 
 
+
 RBTree.prototype.show = function() {
     var shower = function myself(node, depth) {
-        if(node == null) {
+        if(node === null) {
         }
         else {
             var logStr = "";
@@ -61,11 +116,11 @@ RBTree.prototype.show = function() {
 
 var tree = new RBTree();
 
-tree.insert(3);
-tree.insert(5);
-tree.insert(1);
-tree.insert(8);
-tree.insert(7);
-tree.insert(2);
-tree.insert(4);
+tree.insertBinary(3);
+tree.insertBinary(5);
+tree.insertBinary(1);
+tree.insertBinary(8);
+tree.insertBinary(7);
+tree.insertBinary(2);
+tree.insertBinary(4);
 tree.show();

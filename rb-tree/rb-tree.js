@@ -168,9 +168,6 @@ RBTree.prototype.fix = function(node) {
                     pivot.left.color = "red";
                     pivot.right.color = "red";
                     pivot.color = "black";
-                    //if(this.root === pivot) {
-                        //pivot.color = "black";
-                    //}
                 }
 
                 break;
@@ -187,14 +184,6 @@ RBTree.prototype.show = function() {
         if(node === null) {
         }
         else {
-            //var xPos = 0;
-
-            //if(node.parent !== null && node.parent.right === node) {
-                //xPos = 1;
-            //}
-            //else {
-                //xPos = 0;
-            //}
             var color = '';
             if(node.color === "red") {
                 color = '#f00';
@@ -228,21 +217,6 @@ RBTree.prototype.show = function() {
 
             var myID = idstr + cnt;
             cnt++;
-            // var logStr = "";
-            // if(node.color === "red") {
-            //     logStr = "<font color=\"red\">";
-            // }
-            // else {
-            //     logStr = "<font color=\"black\">";
-            // }
-            // console.log("depth: ", depth);
-            // for(var i=0; i<depth; i++) {
-            //     logStr += "&gt;";
-            // }
-            // logStr += node.value;
-            // logStr += "</font>";
-            // window.document.write(logStr + "</br>");
-            // console.log(logStr);
             myself(node.left, depth + 1, myID, xPos - 0.5 / (depth + 1));
             myself(node.right, depth + 1, myID, xPos + 0.5 / (depth + 1));
         }
@@ -253,61 +227,11 @@ RBTree.prototype.show = function() {
 
 var tree = new RBTree();
 
-// 8 18 5 15 17 25 40 80
 for(var i=1; i<=9; i++) {
     tree.insert(i);
 }
 for(var i=8; i>=1; i--) {
     tree.insert(i);
 }
-//tree.insert(24);
-
-console.log(tree);
-// tree.insertBinary(3);
-// tree.insertBinary(5);
-// tree.insertBinary(1);
-// tree.insertBinary(8);
-// tree.insertBinary(7);
-// tree.insertBinary(2);
-// tree.insertBinary(4);
- tree.show();
-
-
-
-
-// Let's first initialize sigma:
-
-// // Then, let's add some data to display:
-//s.graph.addNode({
-    //// Main attributes:
-    //id: 'n0',
-    //label: 'Hello',
-    //// Display attributes:
-    //size: 1,
-    //color: '#f00'
-//});
-//s.graph.addNode({
-    //// Main attributes:
-    //id: 'n1',
-    //label: 'World !',
-    //// Display attributes:
-    //size: 1,
-    //color: '#00f'
-//});
-
-//s.graph.addEdge({
-    //id: 'e0',
-    //// Reference extremities:
-    //source: 'n0',
-    //target: 'n1'
-//});
-
-//s.graph.nodes().forEach(function(node, i, a) {
-    //node.x = Math.cos(Math.PI * 2 * i / a.length);
-    //node.y = Math.sin(Math.PI * 2 * i / a.length);
-    //node.size=8;
-    //node.color='#f00';
-//});
-
-// Finally, let's ask our sigma instance to refresh:
+tree.show(); 
 s.refresh();

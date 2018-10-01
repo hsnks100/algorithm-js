@@ -209,7 +209,8 @@ RBTree.prototype.show = function() {
                                 // Reference extremities:
                                 source: parentID,
                                 target: idstr + cnt,
-                                type: "arrow"
+                                type: "arrow",
+                                color: "#000"
 
 
                 });

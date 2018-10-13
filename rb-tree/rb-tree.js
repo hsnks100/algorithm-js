@@ -243,16 +243,3 @@ function ins() {
 
 }
 ins();
-//setTimeout(function() {
-    
-    //i++;
-//});
-//for(var i=1; i<=9; i++) {
-    //setTimeout(function() {
-    //});
-
-//}
-//for(var i=8; i>=1; i--) {
-    //tree.insert(i);
-//}
-//tree.show(); 

@@ -12,6 +12,24 @@ function RBTree() {
     this.root = null; 
 } 
 
+
+function grandparent(n) {
+    if ((n !== null) && (n.parent !== null))
+        return n.parent.parent;
+    else
+        return null;
+}
+
+function uncle(n) {
+    var g = grandparent(n);
+    if (g === null)
+        return null; // No grandparent means no uncle
+    if (n.parent == g.left)
+        return g.right;
+    else
+        return g.left;
+}
+
 RBTree.prototype.insert = function(v) {
     var node = new Node(v);
     if(this.root === null) {
@@ -23,6 +41,7 @@ RBTree.prototype.insert = function(v) {
                 if(node.left === null) {
                     node.left = newNode;
                     newNode.parent = node;
+                    console.log("insert!!");
                 }
                 else {
                     myself(node.left, newNode);
@@ -32,6 +51,7 @@ RBTree.prototype.insert = function(v) {
                 if(node.right === null) {
                     node.right = newNode;
                     newNode.parent = node;
+                    console.log("insert!!");
                 }
                 else {
                     myself(node.right, newNode);
@@ -41,145 +61,126 @@ RBTree.prototype.insert = function(v) {
         };
         inserter(this.root, node);
     } 
-    this.fix(node); 
-    console.log(node.value, "was fixed");
+    this.insertCase1(node); 
+    // console.log(node.value, "was fixed");
 };
 
-RBTree.prototype.rotateLeft = function(pivot) {
-    var pivotParent = pivot.parent;
-    var pivotLeft = pivot.left;
-    var pivotParentParent = pivot.parent.parent;
-    pivot.left = pivotParent;
-    pivotParent.parent = pivot;
+RBTree.prototype.insertCase1 = function(n) {
+    if (n.parent === null)
+        n.color = "black";
+    else
+        this.insertCase2(n);
+};
 
-    pivotParent.right = pivotLeft;
-    if(pivotLeft !== null) {
-        pivotLeft.parent = pivotParent;
+
+RBTree.prototype.insertCase2 = function(n){
+    if (n.parent.color == "black")
+        return; /* Tree is still valid */
+    else
+        this.insertCase3(n);
+};
+
+RBTree.prototype.insertCase3 = function(n) {
+    var u = uncle(n);
+
+    if ((u !== null) && (u.color === "red")) {
+        // recoloring process, it may need recursive process.
+        n.parent.color = "black";
+        u.color = "black";
+        var g = grandparent(n);
+        g.color = "red";
+        this.insertCase1(g);
+    } else {
+        this.insertCase4(n);
     }
+};
 
-    if(pivotParentParent === null) {
-        this.root = pivot;
-        pivot.parent = null;
+
+RBTree.prototype.rotateLeft = function(n) {
+    var c = n.right;
+    var p = n.parent;
+
+    if (c.left !== null)
+        c.left.parent = n;
+
+    n.right = c.left;
+    n.parent = c;
+    c.left = n;
+    c.parent = p;
+
+    if (p !== null) {
+        if (p.left === n)
+            p.left = c;
+        else
+            p.right = c;
     }
     else {
-        if(pivotParentParent.right === pivotParent) {
-            pivotParentParent.right = pivot;
-            pivot.parent = pivotParentParent;
-        }
-        else {
-            pivotParentParent.left = pivot;
-            pivot.parent = pivotParentParent;
-        }
-    } 
+        this.root = c;
+    }
 };
 
-RBTree.prototype.rotateRight = function(pivot) {
-    var pivotParent = pivot.parent;
-    var pivotRight = pivot.right;
-    var pivotParentParent = pivot.parent.parent;
-    pivot.right = pivotParent;
-    pivotParent.parent = pivot;
+RBTree.prototype.rotateRight = function(n) {
+    var c = n.left;
+    var p = n.parent;
 
-    pivotParent.left = pivotRight;
-    if(pivotRight !== null) {
-        pivotRight.parent = pivotParent;
-    }
+    if (c.right !== null)
+        c.right.parent = n;
 
-    if(pivotParentParent === null) {
-        this.root = pivot;
-        pivot.parent = null;
+    n.left = c.right;
+    n.parent = c;
+    c.right = n;
+    c.parent = p;
+
+    if (p !== null) {
+        if (p.right == n)
+            p.right = c;
+        else
+            p.left = c;
     }
     else {
-        if(pivotParentParent.right === pivotParent) {
-            pivotParentParent.right = pivot;
-            pivot.parent = pivotParentParent;
-        }
-        else {
-            pivotParentParent.left = pivot;
-            pivot.parent = pivotParentParent;
-        }
-    } 
-};
-
-RBTree.prototype.fix = function(node) {
-    console.log("fix value: ", node.value);
-    if(node === this.root) {
-        node.color = "black";
+        this.root = c;
     }
-    else {
-        while(node.parent.color === "red") {
-            console.log("it(", node.value, ")", "needs to be fixed.");
-            var U = null;
-            if(node.parent.parent.right === node.parent) {
-                U = node.parent.parent.left;
-            }
-            else {
-                U = node.parent.parent.right;
-            }
-
-            if(U !== null && U.color === "red") {
-                U.color = "black";
-                node.parent.color = "black";
-                node.parent.parent.color = "red";
-                if(node.parent.parent === this.root) {
-                    node.parent.parent.color = "black";
-                    break;
-                }
-                node = node.parent.parent;
-            }
-            else {
-                // > shape
-                if(node.parent.left === node && node.parent.parent.right === node.parent) {
-                    console.log("> shape");
-                    var pivot = node;
-                    this.rotateRight(pivot);
-                    this.rotateLeft(node); 
-                    node.left.color = "red";
-                    node.right.color = "red";
-                    node.color = "black";
-                    //if(this.root === node) {
-                        //node.color = "black";
-                    //}
-                }
-                // < shape
-                else if(node.parent.right === node && node.parent.parent.left === node.parent) {
-                    console.log("< shape");
-                    var pivot = node;
-                    this.rotateLeft(pivot);
-                    this.rotateRight(node); 
-                    node.left.color = "red";
-                    node.right.color = "red";
-                    node.color = "black";
-                }
-                // / shape
-                else if(node.parent.left === node && node.parent.parent.left === node.parent) {
-                    console.log("/ shape");
-                    var pivot = node.parent;
-                    this.rotateRight(pivot);
-                    pivot.left.color = "red";
-                    pivot.right.color = "red";
-                    pivot.color = "black";
-                }
-                // \ shape
-                else if(node.parent.right === node && node.parent.parent.right === node.parent) {
-                    console.log("\ shape");
-                    var pivot = node.parent;
-                    this.rotateLeft(pivot);
-                    pivot.left.color = "red";
-                    pivot.right.color = "red";
-                    pivot.color = "black";
-                }
-
-                break;
-            }
-        } 
-    } 
 };
 
+RBTree.prototype.insertCase4 = function(n) {
+    var g = grandparent(n);
+
+    // To make / or \ shape
+    // case: < shape, the tail is node;
+    if ((n === n.parent.right) && (n.parent === g.left)) {
+        this.rotateLeft(n.parent);
+        n = n.left;
+    } 
+    // case: > shape, the tail is node;
+    else if ((n === n.parent.left) && (n.parent === g.right)) {
+        this.rotateRight(n.parent);
+        n = n.right;
+    }
+    this.insertCase5(n);
+};
+
+
+RBTree.prototype.insertCase5 = function(n) {
+    // re-construuct process
+    var g = grandparent(n);
+
+    n.parent.color = "black";
+    g.color = "red";
+    
+
+    // shape: / or \, rotate top position(left or right).
+    if (n === n.parent.left)
+        this.rotateRight(g);
+    else
+        this.rotateLeft(g);
+};
 
 RBTree.prototype.show = function() {
+
+    console.log(this.root);
     var idstr = 'id';
     var cnt = 0;
+    s.graph.clear();
     var shower = function myself(node, depth, parentID, xPos) {
         if(node === null) {
         }
@@ -228,11 +229,30 @@ RBTree.prototype.show = function() {
 
 var tree = new RBTree();
 
-for(var i=1; i<=9; i++) {
-    tree.insert(i);
+var i = 1;
+function ins() {
+    setTimeout(function() {
+        i++;
+        tree.insert(i);
+        tree.show(); 
+        s.refresh();
+        if(i<=10) {
+            ins();
+        }
+    }, 2000);
+
 }
-for(var i=8; i>=1; i--) {
-    tree.insert(i);
-}
-tree.show(); 
-s.refresh();
+ins();
+//setTimeout(function() {
+    
+    //i++;
+//});
+//for(var i=1; i<=9; i++) {
+    //setTimeout(function() {
+    //});
+
+//}
+//for(var i=8; i>=1; i--) {
+    //tree.insert(i);
+//}
+//tree.show(); 

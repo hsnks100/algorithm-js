@@ -229,14 +229,14 @@ RBTree.prototype.show = function() {
 
 var tree = new RBTree();
 
-var i = 1;
+var i = 0;
 function ins() {
     setTimeout(function() {
         i++;
         tree.insert(i);
         tree.show(); 
         s.refresh();
-        if(i<=10) {
+        if(i<10) {
             ins();
         }
     }, 2000);
